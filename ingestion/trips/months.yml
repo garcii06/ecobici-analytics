@@ -1,0 +1,7 @@
+months:
+  - {month: "2026-04", url: "https://ecobici.cdmx.gob.mx/wp-content/uploads/2026/05/2026-04.csv"}
+  - {month: "2026-05", url: "https://ecobici.cdmx.gob.mx/wp-content/uploads/2026/06/2026-05.csv"}
+  - {month: "2026-06", url: "https://ecobici.cdmx.gob.mx/wp-content/uploads/2026/07/public_data_web_2026-06.csv"}
+  - {month: "2026-07", url: "https://ecobici.cdmx.gob.mx/wp-content/uploads/2026/08/public_data_web_2026-07.csv"}
+  - {month: "2026-08", url: "https://ecobici.cdmx.gob.mx/wp-content/uploads/2026/09/public_data_web_2026-08_2.csv"}
+  - {month: "2026-09", url: "https://ecobici.cdmx.gob.mx/wp-content/uploads/2026/10/public_data_web_2026-09.csv"}

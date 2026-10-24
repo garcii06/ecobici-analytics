@@ -1,0 +1,4 @@
+profiles.yml: the connection. It tells dbt “write your results into this DuckDB file” (data/warehouse.duckdb).
+dbt_project.yml: the project settings. It names the project, links it to the profile above, and sets the default for each layer: staging models are views (cheap, always fresh) and marts are tables (physically stored, fast to query).
+_sources.yml: declares “this raw data exists and here’s where it is”. The external_location line tells dbt-duckdb to read the parquet files directly instead of loading them into a table first. Declaring it as a source is what lets models refer to it with {{ source('raw','trips') }}, which gives you lineage in the docs, source-level tests, and a single place to change if the path moves.
+stg_trips.sql: the first model. Staging does only mechanical cleanup: renaming columns, casting text to proper types, trimming blanks to NULL, and creating a trip_key. No business logic, so every later model can trust the types.

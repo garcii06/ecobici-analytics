@@ -1,0 +1,30 @@
+name: ecobici              # PROJECT NAME: your label (letters, digits, underscores). It's also the key you use under `models:` below
+version: "1.0.0"           # your own project version, informational only
+profile: ecobici           # which PROFILE in profiles.yml to connect with
+model-paths: ["models"]    # where dbt looks for models (this is the default, so it could be omitted)
+
+models:                    # default settings for models
+  ecobici:                 # must match `name:` above
+    staging:               # a FOLDER name inside models/
+      +materialized: view  # every model in models/staging/ becomes a view
+    transform:
+      +materialized: view  # every model in models/transform/ becomes a view
+    marts:
+      +materialized: table # every model in models/marts/ becomes a table
+
+vars:
+  min_user_age: 16
+  max_user_age: 90
+  long_trip_seconds: 86400     # 24 hours
+
+# materialized controls how the model is built
+# view (a saved query, always fresh, no storage)
+# table (stored result, fast to read, rebuilt each run)
+# incremental (only adds or updates new rows)
+# ephemeral (inlined into other models as a CTE, nothing creating in the db)
+
+# Precedence: more specific settings win. 
+# From weakest to strongest:
+# dbt_project.yml (folder level)
+# model’s properties in its .yml file
+# {{ config(...) }} block at the top of the .sql file.

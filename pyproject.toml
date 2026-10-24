@@ -1,0 +1,17 @@
+[project]
+name = "ecobici"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dbt-duckdb>=1.11.0",
+    "duckdb>=2.0.0",
+    "pyyaml>=6.0.3",
+    "requests>=2.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "sqlfluff>=4.4.0",
+]

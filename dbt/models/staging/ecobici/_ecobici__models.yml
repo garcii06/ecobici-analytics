@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: stg_ecobici__trips
+    description: "{{ doc('stg_trips') }}"
+    columns:
+      - name: trip_key
+        description: "Hash of all trip columns; the files have no trip ID"
+        data_tests:
+          - not_null
+          - unique
+      - name: user_gender
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["M", "F", "O", "?"]
+      - name: user_age
+        data_tests:
+          - not_null: 
+              config: 
+                # severity is a test setting with two values:
+                # error (the default): a failing test is an error. In dbt build, the models downstream of the tested model are skipped
+                # warn: the test still runs and shows its count, but the build continues, downstream models run
+                # Can also set thresholds with warn_if and error_if. By default both are != 0
+                severity: warn
+                # warn_if: ">0"       # any nulls: show a warning
+                # error_if: ">1000"   # more than 1000: fail the build
+      - name: start_station_id
+        data_tests: 
+          - not_null
+      - name: end_station_id
+        data_tests:
+          - not_null
+      - name: started_at
+        data_tests: 
+          - not_null
+      - name: ended_at
+        data_tests: 
+          - not_null
+
+# Constraints vs data tests
+# Data tests
+# When:   After the model is built
+# Effect: Reports (error or warn)
+# Where:  Any model or source
+# Types:  not_null, unique, relationships, custom SQL
+
+# Constraints
+# When:   While the model is being created
+# Effect: The build fails, and the table isn’t created
+# Where:  Table/incremental models
+# Types:  not_null, primary_key, foreign_key, unique, check

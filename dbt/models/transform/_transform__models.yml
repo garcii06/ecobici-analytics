@@ -1,0 +1,65 @@
+version: 2
+# dbt build runs the unit tests first, then the model, then the data tests.
+# You can run only them with dbt test --select test_type:unit.
+# columns:    is optional. You only list the columns you want to document or test. The exception is a contract, where you must list all of them.
+# data_tests: attaches generic tests to a column. arguments: holds the test’s settings, and config: would hold severity and thresholds.
+# unit_tests: tests the logic of a model, not the data
+# given:      test inputs. Each input replaces a ref() (or source()) with the rows you write
+# expect:     the rows the model should produce for those inputs. dbt compares them and fails on any difference.
+
+models:
+  - name: int_trips
+    description: "Trips with business rules applied. Adds duration, date/hour parts, age and gender cleanup, and flags. No rows are removed."
+    columns:
+      - name: trip_key
+        data_tests: 
+          - not_null
+          - unique
+      - name: user_age_reported
+        description: "Age as reported in the file, unmodified"
+      - name: user_age
+        description: "Reported age if within the min/max vars, otherwise NULL"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 16
+                max_value: 90
+      - name: user_gender_label
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["male", "female", "other", "unknown"]
+      - name: age_group
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["<25", "25-34", "35-44", "45-54", "55-64", "65+", "unknown"]
+      - name: duration_seconds
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: is_round_trip
+        data_tests: 
+          - not_null
+      - name: is_long_trip
+        data_tests: 
+          - not_null
+
+unit_tests:
+  - name: int_trips_age_gender_and_flags
+    model: int_trips
+    given:
+      - input: ref('stg_ecobici__trips')
+        rows:
+          - {trip_key: a, user_age: 150, user_gender: "?", start_station_id: "1", end_station_id: "1",
+             started_at: "2026-04-01 08:00:00", ended_at: "2026-04-01 08:10:00"}
+          - {trip_key: b, user_age: 30, user_gender: "F", start_station_id: "1", end_station_id: "2",
+             started_at: "2026-04-01 08:00:00", ended_at: "2026-04-02 09:00:00"}
+    expect:
+      rows:
+        - {trip_key: a, user_age_reported: 150, user_age: null, user_gender_label: unknown,
+           age_group: unknown, is_round_trip: true, duration_seconds: 600, is_long_trip: false}
+        - {trip_key: b, user_age_reported: 30, user_age: 30, user_gender_label: female,
+           age_group: "25-34", is_round_trip: false, duration_seconds: 90000, is_long_trip: true}

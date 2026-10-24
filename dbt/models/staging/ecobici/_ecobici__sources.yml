@@ -1,0 +1,26 @@
+version: 2                       # schema version of dbt YAML files, always 2
+
+# sources: is a declaration that this data exists and that dbt does not build it.
+# name: raw groups tables that come from the same place.
+# external_location is specific to dbt-duckdb.
+# meta: is a free-form dictionary for extra settings. Adapters and plugins read their own keys from it.
+# columns and tests let you check the raw data before any transformation.
+
+sources:
+  - name: ecobici                   # SOURCE NAME: first argument of source('ecobici', 'trips')
+    description: "Raw files landed by the Python ingestion scripts, untouched"
+    tables:
+      - name: trips                 # TABLE NAME: second argument of source('ecobici', 'trips')
+        description: "Monthly Ecobici trip files, all columns as text"
+        meta:
+          external_location: "read_parquet('../data/raw/trips/*/*.parquet', union_by_name=true, hive_partitioning=false)"
+        columns:
+          - name: Bici
+            tests: 
+              - not_null
+          - name: Fecha_Retiro
+            tests:
+              - not_null
+          - name: Fecha_Arribo
+            tests:
+              - not_null

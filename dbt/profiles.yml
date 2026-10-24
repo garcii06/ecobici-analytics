@@ -1,0 +1,6 @@
+ecobici:                              # PROFILE NAME: a label you choose. dbt_project.yml points to it with `profile: profile_name`
+  target: dev                         # which output to use by default
+  outputs:
+    dev:                              # TARGET NAME: also a label you choose (convention: dev / prod)
+      type: duckdb                    # ADAPTER: which database engine
+      path: ../data/warehouse.duckdb  # duckdb adapter-specific setting
