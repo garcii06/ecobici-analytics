@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: dim_dates
+    description: "One row per calendar day. Joined by fct_trips on both start and end date."
+    config:
+      contract:
+        enforced: true            # every column must be listed with its data_type
+    columns:
+      - name: date_day
+        data_type: date
+        description: "Calendar date, primary key"
+        constraints:
+          - type: not_null
+          - type: primary_key
+      - name: year_month
+        data_type: varchar
+      - name: year_number
+        data_type: integer
+      - name: quarter_number
+        data_type: integer
+      - name: month_number
+        data_type: integer
+      - name: month_name
+        data_type: varchar
+      - name: day_of_month
+        data_type: integer
+      - name: day_of_week_number
+        data_type: integer
+        description: "ISO day of week, 1 = Monday"
+      - name: day_name
+        data_type: varchar
+      - name: week_of_year
+        data_type: integer
+      - name: is_weekend
+        data_type: boolean
