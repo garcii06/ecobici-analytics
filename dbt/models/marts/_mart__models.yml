@@ -53,3 +53,94 @@ models:
       - name: last_seen_at
         data_type: timestamp
         description: "Latest trip start or end at this station in the loaded data"
+
+  - name: fct_trips
+    description: "One row per completed trip. Incremental by file month (_month); start and end station and date are foreign keys to dim_stations and dim_dates."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: trip_key
+        data_type: varchar
+        description: "Hash of the trip columns; the source files have no trip ID"
+        constraints:
+          - type: not_null
+        data_tests: 
+          - unique
+      - name: start_station_id
+        data_type: varchar
+        constraints:
+          - type: not_null
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_stations')
+                field: station_id
+      - name: end_station_id
+        data_type: varchar
+        constraints:
+          - type: not_null
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_stations')
+                field: station_id
+      - name: started_date
+        data_type: date
+        constraints:
+          - type: not_null
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: date_day
+      - name: ended_date
+        data_type: date
+        constraints:
+          - type: not_null
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: date_day
+      - name: started_at
+        data_type: timestamp
+        constraints:
+          - type: not_null
+      - name: ended_at
+        data_type: timestamp
+        constraints:
+          - type: not_null
+      - name: started_hour
+        data_type: integer
+      - name: ended_hour
+        data_type: integer
+      - name: duration_seconds
+        data_type: integer
+        constraints:
+          - type: check
+            expression: "duration_seconds >= 0"
+      - name: bike_id
+        data_type: varchar
+      - name: user_gender_label
+        data_type: varchar
+        constraints:
+          - type: not_null
+      - name: user_age
+        data_type: integer
+        description: "Reported age if between the min and max vars, otherwise NULL"
+      - name: age_group
+        data_type: varchar
+        constraints:
+          - type: not_null
+      - name: is_round_trip
+        data_type: boolean
+      - name: is_long_trip
+        data_type: boolean
+      - name: _month
+        data_type: varchar
+        description: "Month of the source file, which matches the month the trip ended"
+        constraints:
+          - type: not_null
+      - name: _loaded_at
+        data_type: timestamp with time zone
