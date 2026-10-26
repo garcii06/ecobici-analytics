@@ -16,6 +16,8 @@ vars:
   min_user_age: 16
   max_user_age: 90
   long_trip_seconds: 86400     # 24 hours
+  dim_dates_start: "2026-01-01"
+  dim_dates_end: "2027-01-01"
 
 # materialized controls how the model is built
 # view (a saved query, always fresh, no storage)
