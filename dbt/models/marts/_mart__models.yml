@@ -34,3 +34,22 @@ models:
         data_type: integer
       - name: is_weekend
         data_type: boolean
+
+  - name: dim_stations
+    description: "One row per station seen in the trip data, as a start or an end."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: station_id
+        data_type: varchar
+        description: "Station code as reported in the trip files, primary key"
+        constraints:
+          - type: not_null
+          - type: primary_key
+      - name: first_seen_at
+        data_type: timestamp
+        description: "Earliest trip start or end at this station in the loaded data"
+      - name: last_seen_at
+        data_type: timestamp
+        description: "Latest trip start or end at this station in the loaded data"
