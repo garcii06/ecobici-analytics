@@ -1,3 +1,5 @@
+{{ config(event_time='ended_at') }}
+
   WITH trips AS(
 SELECT * rename (user_age AS user_age_reported)
   FROM {{ ref('stg_ecobici__trips') }}
