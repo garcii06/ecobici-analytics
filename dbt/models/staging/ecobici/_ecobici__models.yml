@@ -38,6 +38,29 @@ models:
         data_tests: 
           - not_null
 
+unit_tests:
+  - name: stg_trips_scrubs_missing_gender
+    model: stg_ecobici__trips
+    given:
+      - input: source('ecobici', 'trips')
+        format: sql
+        rows: |
+          with base as (
+            select '30' as Edad_Usuario,
+                   '1' as Ciclo_Estacion_Retiro, '01/04/2026' as Fecha_Retiro, '08:00:00' as Hora_Retiro,
+                   '2' as Ciclo_EstacionArribo,  '01/04/2026' as Fecha_Arribo, '08:10:00' as Hora_Arribo,
+                   '2026-04' as _month, 'x' as _source_url, now() as _loaded_at
+          ),
+          genders(Bici, Genero_Usuario) as (
+            values ('b1', 'NULL'), ('b2', ' F '), ('b3', ''), ('b4', 'M')
+          )
+          select * from genders cross join base
+    expect:
+      rows:
+        - {bike_id: "b1", user_gender: null}
+        - {bike_id: "b2", user_gender: "F"}
+        - {bike_id: "b3", user_gender: null}
+        - {bike_id: "b4", user_gender: "M"}
 # Constraints vs data tests
 # Data tests
 # When:   After the model is built
