@@ -47,6 +47,14 @@ models:
         data_tests: 
           - not_null
 
+  - name: int_stations_latest
+    description: "Latest poll per station from the GBFS feed. One row per station code, and the input of the station snapshot."
+    columns:
+      - name: station_code
+        data_tests:
+          - not_null
+          - unique
+
 unit_tests:
   - name: int_trips_age_gender_and_flags
     model: int_trips

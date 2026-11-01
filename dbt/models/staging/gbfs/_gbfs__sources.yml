@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: gbfs
+    description: "Ecobici GBFS feeds polled by ingestion/gbfs/poll_gbfs.py, one parquet file per poll"
+    loaded_at_field: _loaded_at
+    freshness:
+      warn_after: {count: 7, period: day}
+    tables:
+      - name: station_information
+        meta:
+          external_location: "read_parquet('../data/raw/gbfs/station_information/*.parquet', union_by_name=true)"
+        columns:
+          - name: station_id
+            data_tests: 
+              - not_null

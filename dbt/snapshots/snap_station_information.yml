@@ -1,0 +1,12 @@
+snapshots:
+  - name: snap_station_information
+    relation: ref('int_stations_latest')
+    config:
+      schema: snapshots
+      unique_key: station_code
+      strategy: check
+      check_cols:
+        - station_name
+        - latitude
+        - longitude
+        - capacity

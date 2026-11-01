@@ -43,16 +43,31 @@ models:
     columns:
       - name: station_id
         data_type: varchar
-        description: "Station code as reported in the trip files, primary key"
+        description: "Station code as used in the trip files (the short_name of the GBFS feed), primary key"
         constraints:
           - type: not_null
           - type: primary_key
+      - name: station_name
+        data_type: varchar
+        description: "Name from the GBFS feed. NULL for stations that are not in the feed"
+      - name: latitude
+        data_type: double
+      - name: longitude
+        data_type: double
+      - name: capacity
+        data_type: integer
+        description: "Number of docks"
+      - name: has_station_details
+        data_type: boolean
+        description: "False for stations that appear in trips but not in the current feed (likely decommissioned)"
+        constraints:
+          - type: not_null
       - name: first_seen_at
         data_type: timestamp
-        description: "Earliest trip start or end at this station in the loaded data"
+        description: "Earliest trip start or end at this station. NULL for stations with no trips yet"
       - name: last_seen_at
         data_type: timestamp
-        description: "Latest trip start or end at this station in the loaded data"
+        description: "Latest trip start or end at this station. NULL for stations with no trips yet"
 
   - name: fct_trips
     description: "One row per completed trip. Incremental by file month (_month); start and end station and date are foreign keys to dim_stations and dim_dates."

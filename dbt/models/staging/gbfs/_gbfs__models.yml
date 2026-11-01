@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: stg_gbfs__station_information
+    description: "One row per station per poll. Types cast, names cleaned, unused feed fields dropped."
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - station_code
+              - _snapshot_at
+    columns:
+      - name: gbfs_station_id
+        description: "Internal station ID of the GBFS feed. Does not match the trip files."
+        data_tests:
+          - not_null
+      - name: station_code
+        description: "Station code, the short_name in the feed. Matches the station code in the trip files."
+        data_tests:
+          - not_null
+      - name: station_name
+        description: "Station name with whitespace cleaned"
+        data_tests:
+          - not_null
+      - name: external_id
+        description: "UUID of the station in the feed, as text"
+      - name: latitude
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 19
+                max_value: 20
+              config:
+                severity: warn
+      - name: longitude
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -100
+                max_value: -98
+              config:
+                severity: warn
+      - name: capacity
+        description: "Number of docks"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+              config:
+                severity: warn
+      - name: has_kiosk
+      - name: is_charging
+      - name: feed_updated_at
+        description: "Feed-level last_updated timestamp, the same for every station in a poll"
+      - name: _snapshot_at
+        description: "When the poll ran"
+      - name: _loaded_at
+        description: "When the parquet file was written"

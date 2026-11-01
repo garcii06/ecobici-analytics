@@ -1,5 +1,9 @@
-{%- macro scrub_string(column_name) -%}
+{%- macro scrub_string(column_name, collapse_spaces=false) -%}
+    {%- if collapse_spaces -%}
+    nullif(regexp_replace(trim({{ column_name }}), '\s+', ' ', 'g'), '')
+    {%- else -%}
     nullif(trim({{ column_name }}), '')
+    {%- endif -%}
 {%- endmacro -%}
 
 {%- macro scrub_int(column_name) -%}
