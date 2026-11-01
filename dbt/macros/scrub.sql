@@ -2,7 +2,7 @@
     {%- if collapse_spaces -%}
     nullif(regexp_replace(trim({{ column_name }}), '\s+', ' ', 'g'), '')
     {%- else -%}
-    nullif(trim({{ column_name }}), '')
+    nullif(nullif(trim({{ column_name }}), ''), 'NULL')
     {%- endif -%}
 {%- endmacro -%}
 
