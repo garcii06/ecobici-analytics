@@ -56,3 +56,36 @@ models:
         description: "When the poll ran"
       - name: _loaded_at
         description: "When the parquet file was written"
+
+  - name: stg_gbfs__station_status
+    description: "One row per station per poll. Counts cast to integers, flags to booleans, epoch to timestamp."
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - gbfs_station_id
+              - _snapshot_at
+    columns:
+      - name: gbfs_station_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_gbfs__station_information')
+                field: gbfs_station_id
+              config:
+                severity: warn
+      - name: bikes_available
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: docks_available
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: reported_at
+        description: "When the station last reported its state; can be older than the poll"
+      - name: _snapshot_at
+        description: "When the poll ran"

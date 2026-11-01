@@ -14,3 +14,14 @@ sources:
           - name: station_id
             data_tests: 
               - not_null
+
+      - name: station_status
+        description: "Availability of bikes and docks per station, one row per station per poll"
+        meta:
+          external_location: "read_parquet('../data/raw/gbfs/station_status/*.parquet', union_by_name=true)"
+        freshness:
+          warn_after: {count: 6, period: hour}
+        columns:
+          - name: station_id
+            data_tests:
+              - not_null
