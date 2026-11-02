@@ -2,8 +2,10 @@
 
 {{ config(
     materialized='incremental',
-    unique_key='trip_key',
-    incremental_strategy='delete+insert',
+    incremental_strategy='microbatch',
+    event_time='ended_at',
+    batch_size='month',
+    begin='2025-04-01',
     on_schema_change='fail'
 ) }}
 
@@ -26,7 +28,3 @@ select trip_key
      , _month
      , _loaded_at
   from {{ ref('int_trips') }}
-
-{% if is_incremental() %}
- where _month >= (select max(_month) from {{ this }})
-{% endif %}
